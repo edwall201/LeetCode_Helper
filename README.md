@@ -1,8 +1,9 @@
 # 🧠 LeetCode Helper
 
 LeetCode Helper is an intelligent coding assistant that helps programmers evaluate their LeetCode solutions with instant AI-driven feedback. By analyzing submitted code through GPT, it provides insights into logic, efficiency, and readability — empowering developers to continuously improve their problem-solving and coding quality.
-
-## Features
+<p align="center">
+  <img src="./Demo.png" alt="LeetCode Helper Demo" width="700"/>
+</p>## Features
 
 ### Code Evaluation Categories
 1. Logic – Checks the correctness and reasoning behind the solution.  
