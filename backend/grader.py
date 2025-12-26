@@ -1,3 +1,4 @@
+from typing import Dict
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -48,6 +49,23 @@ class SolutionFeedback(BaseModel):
     efficiency: int
     readability: int
 
+def grade_solution(ques: str, ans: str) -> Dict[str, float]:
+    user_prompt = USER_PROMPT_TEMPLATE.format(question = ques, answer = ans)
+    
+    response = client.responses.parse(
+        model = MODEL,
+        input = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        text_format = SolutionFeedback,
+    )
+
+    data = response.output_parsed
+    if data is None:
+        raise ValueError(f"Failed to parse response:\n{response.output_text}")
+    return data.model_dump()
+
 response = client.responses.parse(
         model = MODEL,
         input = [
@@ -56,3 +74,11 @@ response = client.responses.parse(
         ],
         text_format = SolutionFeedback,
 )
+
+data = response.output_parsed
+if data is None:
+    raise ValueError(f"Failed to parse response:\n{response.output_text}")
+
+print(f"{data.logic}/10")
+print(f"{data.efficiency}/10")
+print(f"{data.readability}/10")
