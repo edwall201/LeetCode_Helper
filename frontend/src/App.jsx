@@ -1,5 +1,41 @@
 import { useState } from 'react';
 
+async function analyze(question, answer, { setResult }) {
+  if (!question?.trim() || !answer?.trim()) {
+    alert("Please enter both a question and an answer");
+    return;
+  }
+
+  const res = await fetch("http://127.0.0.1:8000/api/grade", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      "question": question,
+      "answer": answer,
+    })
+  })
+  
+  
+  if (!res.ok) {
+    throw new Error("Failed to grade solution");
+  } 
+
+  const data = await res.json();
+  const time = new Date().toISOString();
+  const record = {
+    time,
+    logic: data.logic,
+    efficiency: data.efficiency,
+    readability: data.readability,
+    question,
+    answer,
+  }
+  setResult(record);
+}
+
+
 function InputPanel({ question, setQuestion, answer, setAnswer, onAnalyze}) {
   return (
     <div className="w-full flex flex-col items-center">
@@ -20,7 +56,7 @@ function InputPanel({ question, setQuestion, answer, setAnswer, onAnalyze}) {
       />
 
       <button
-        onClick={analyze}
+        onClick={onAnalyze}
         className="px-10 py-3 bg-indigo-600 text-white rounded hover:bg-indigo-700 mb-10 text-lg"
       >
         Analyze
@@ -64,69 +100,6 @@ export default function App() {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState(null);
 
-  function tokenize(text) {
-    if (!text) return [];
-    return text
-      .toLowerCase()
-      .replace(/[\W_]+/g, ' ')
-      .split(/\s+/)
-      .filter(Boolean)
-      .filter((w) => !['the', 'is', 'a', 'an', 'to', 'for', 'of', 'in', 'on', 'and', 'or', 'with', 'by', 'that', 'this'].includes(w));
-  };
-
-  function scoreLogic(q, a) {
-    const qWords = tokenize(q).slice(0, 30);
-    const aWords = new Set(tokenize(a));
-    if (!qWords.length || !aWords.size) return 0;
-    let matches = 0;
-    qWords.forEach((w) => {
-      if (aWords.has(w)) matches++;
-    });
-    const score = Math.round((matches / qWords.length) * 100);
-    return Math.min(100, score);
-  };
-
-  function scoreEfficiency(a) {
-    if (!a) return 0;
-    const hasComplexity = /\bO\(|time complexity|space complexity|\bO\(/i.test(a);
-    if (hasComplexity) return 90;
-    const lines = a.split('\n').filter(Boolean).length;
-    if (lines <= 10) return 80;
-    if (lines <= 30) return 60;
-    return 40;
-  };
-
-  function scoreReadability(a) {
-    if (!a) return 0;
-    const hasComments = /\/\/|\/\*|#|<!--/.test(a);
-    const avgLineLen =
-      a
-        .split('\n')
-        .filter(Boolean)
-        .reduce((s, l) => s + l.length, 0) / Math.max(1, a.split('\n').filter(Boolean).length);
-    let score = 50;
-    if (hasComments) score += 25;
-    if (avgLineLen < 80) score += 15;
-    if (avgLineLen > 140) score -= 10;
-    return Math.max(0, Math.min(100, score));
-  };
-
-  function analyze() {
-    const time = new Date().toISOString();
-    const l = scoreLogic(question, answer);
-    const e = scoreEfficiency(answer);
-    const r = scoreReadability(answer);
-    const record = {
-      time,
-      logic: l,
-      efficiency: e,
-      readability: r,
-      question,
-      answer,
-    };
-    setResult(record);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center overflow-y-auto">
       <div className="flex flex-col items-center justify-start w-full max-w-7xl bg-white shadow-lg rounded-2xl p-12 text-center">
@@ -138,7 +111,7 @@ export default function App() {
           setQuestion = {setQuestion}
           answer = {answer}
           setAnswer = {setAnswer}
-          onAnalyze = {analyze}
+          onAnalyze = {() => analyze(question, answer, { setResult })}
         />
         {/* Results Section */}
         <ResultPanel
