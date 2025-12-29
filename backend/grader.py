@@ -16,7 +16,7 @@ USER_PROMPT_TEMPLATE = """Leetcode Question:
 Candidate Answer (verbatim):
 {answer}
 
-Grade the answer on these criteria (0-10, where 10 is the best):
+Grade the answer on these criteria (0-100, where 100 is the best):
 - Logic: correctness, edge cases, and whether it actually solves the problem
 - Efficiency: time/space complexity relative to the optimal approach
 - Readability: clarity, code quality, code organization, naming, comments
@@ -37,7 +37,7 @@ Candidate Answer (verbatim):
                 return [i, m[diff]]
             m[nums[i]] = i
 
-Grade the answer on these criteria (0-10, where 10 is the best):
+Grade the answer on these criteria (0-100, where 100 is the best):
 - Logic: correctness, edge cases, and whether it actually solves the problem
 - Efficiency: time/space complexity relative to the optimal approach
 - Readability: clarity, code quality, code organization, naming, comments
