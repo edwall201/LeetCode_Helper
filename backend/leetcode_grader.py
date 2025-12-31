@@ -11,7 +11,7 @@ client = OpenAI(api_key = API_KEY)
     
 GRADE_SCHEMA: Dict[str, Any] = {
     "type": "json_schema",
-    "json_schame": {
+    "json_schema": {
         "name": "LeetCodeGrading",
         "schema": {
             "type": "object",
