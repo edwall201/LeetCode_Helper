@@ -16,8 +16,7 @@ async function analyze(question, answer, { setResult }) {
       "answer": answer,
     })
   })
-  
-  
+
   if (!res.ok) {
     throw new Error("Failed to grade solution");
   } 
@@ -38,10 +37,10 @@ async function analyze(question, answer, { setResult }) {
 
 function InputPanel({ question, setQuestion, answer, setAnswer, onAnalyze}) {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center space-y-12 bg-yellow-100">
       <textarea
         style={{ height: '18rem' }}
-        className="w-2/3 p-5 border rounded mb-8 resize-none text-2xl placeholder:text-2xl placeholder:text-gray-400"
+        className="w-2/3 p-5 border rounded resize-none text-2xl placeholder:text-2xl placeholder:text-gray-400"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="LeetCode question title or summary"
@@ -49,7 +48,7 @@ function InputPanel({ question, setQuestion, answer, setAnswer, onAnalyze}) {
 
       <textarea
         style={{ height: '18rem' }}
-        className="w-2/3 p-5 border rounded mb-8 resize-none text-2xl placeholder:text-2xl placeholder:text-gray-400"
+        className="w-2/3 p-5 border rounded resize-none text-2xl placeholder:text-2xl placeholder:text-gray-400"
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         placeholder={`Paste your answer / code here.\nInclude comments or complexity notes if you have them.`}
@@ -104,19 +103,24 @@ export default function App() {
     <div className="min-h-screen bg-gray-50 flex justify-center overflow-y-auto">
       <div className="flex flex-col items-center justify-start w-full max-w-7xl bg-white shadow-lg rounded-2xl p-12 text-center">
         <h1 className="text-5xl font-bold mb-12 mt-6">LeetCode Helper</h1>
-
-        {/* Question and Answer inputs */}
-        <InputPanel 
-          question = {question}
-          setQuestion = {setQuestion}
-          answer = {answer}
-          setAnswer = {setAnswer}
-          onAnalyze = {() => analyze(question, answer, { setResult })}
-        />
-        {/* Results Section */}
-        <ResultPanel
-          result = {result}
-        />
+        <div className="flex flex-row w-full gap-5 text-left"> 
+          {/* Question and Answer inputs */}
+          <div className="w-1/2 min-w-[520px]">
+            <InputPanel 
+              question = {question}
+              setQuestion = {setQuestion}
+              answer = {answer}
+              setAnswer = {setAnswer}
+              onAnalyze = {() => analyze(question, answer, { setResult })}
+            />
+          </div>
+          {/* Results Section */}
+          <div className="flex-1 min-w-[360px]">
+            <ResultPanel
+              result = {result}
+            />
+          </div>
+       </div>
       </div>
     </div>
   );
